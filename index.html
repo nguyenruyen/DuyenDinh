@@ -2,9 +2,19 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
+<meta name="description" content="Thân mời quý khách đến dự lễ cưới của Hồng Duyên & Lã Định | Thứ Bảy, 28 tháng 11, 2026 | Thôn Yên Tân, xã Tân Minh, tỉnh Ninh Bình">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nguyenruyen.github.io/DuyenDinh/">
+<meta property="og:title" content="Hồng Duyên & Lã Định">
+<meta property="og:description" content="Thân mời quý khách đến dự lễ cưới của Hồng Duyên & Lã Định | Thứ Bảy, 28 tháng 11, 2026 | Thôn Yên Tân, xã Tân Minh, tỉnh Ninh Bình">
+<meta property="og:image" content="https://nguyenruyen.github.io/DuyenDinh/og.jpg">
+<meta property="og:image:secure_url" content="https://nguyenruyen.github.io/DuyenDinh/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://nguyenruyen.github.io/DuyenDinh/og.jpg">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta property="og:title" content="Thiệp cưới Hồng Duyên & Lã Định">
-<meta property="og:description" content="Trân trọng kính mời bạn đến dự lễ cưới của chúng mình · Thứ Bảy 28/11/2026">
 <title>Thiệp cưới Hồng Duyên & Lã Định</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap">
@@ -136,6 +146,14 @@ button,input,textarea{font:inherit}
 .pop{position:fixed;inset:0;z-index:70;background:rgba(30,0,6,.6);display:flex;align-items:center;justify-content:center;padding:24px}
 .popc{width:100%;max-width:300px;background:var(--red);border:1px solid var(--gold);border-radius:16px;padding:26px 20px;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;box-shadow:0 20px 50px rgba(0,0,0,.5)}
 @media (prefers-reduced-motion:no-preference){.pop:not([hidden]) .popc{animation:pop .4s ease both}}
+.lb{position:fixed;inset:0;z-index:80;background:rgba(15,0,3,.98);display:flex;align-items:center;justify-content:center;touch-action:pan-y}
+.lb img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;padding:calc(56px + env(safe-area-inset-top,0px)) max(8px,env(safe-area-inset-right,0px)) calc(56px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));user-select:none}
+.lbb{position:absolute;border:0;background:rgba(122,0,20,.75);color:var(--gold);width:44px;height:44px;border-radius:50%;font-size:26px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.lbx{top:calc(10px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px))}
+.lbp{left:max(8px,env(safe-area-inset-left,0px));top:50%;transform:translateY(-50%)}
+.lbn{right:max(8px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%)}
+.lbc{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:var(--gold);font-family:system-ui,sans-serif;font-size:14px}
+.card3.c{cursor:zoom-in}
 /* Guestbook */
 .gb{width:100%;padding:18px;border-radius:14px;background:rgba(255,255,255,.08);display:flex;flex-direction:column;gap:10px;text-align:left}
 .gb input,.gb textarea{width:100%;background:rgba(255,190,137,.1);border:1px solid var(--gold-faint);border-radius:10px;color:var(--gold);padding:10px 12px;font-family:var(--f-body);font-size:14px}
@@ -309,6 +327,13 @@ button,input,textarea{font:inherit}
   </section>
 </main>
 <div class="toast" id="toast" hidden></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Xem ảnh">
+  <img id="lbImg" alt="">
+  <button class="lbb lbx" id="lbX" type="button" aria-label="Đóng">×</button>
+  <button class="lbb lbp" id="lbP" type="button" aria-label="Ảnh trước">‹</button>
+  <button class="lbb lbn" id="lbN" type="button" aria-label="Ảnh sau">›</button>
+  <div class="lbc" id="lbC"></div>
+</div>
 <div class="pop" id="pop" hidden role="dialog" aria-modal="true" aria-labelledby="popT">
   <div class="popc">
     <div class="hy" style="font-size:40px;line-height:1">囍</div>
@@ -391,7 +416,7 @@ button,input,textarea{font:inherit}
       const c=document.createElement("div");c.className="card3";
       const im=document.createElement("img");im.src=src(id);im.alt="Ảnh cưới "+(i+1);im.decoding="async";
       im.onload=()=>{if(im.naturalWidth>im.naturalHeight)c.classList.add("wide");};
-      c.appendChild(im);c.addEventListener("click",()=>{if(i!==cur)go(i,true);});
+      c.appendChild(im);c.addEventListener("click",()=>{if(i!==cur)go(i,true);else openLb(i);});
       st.appendChild(c);return c;
     });
     const th=$("thumbs");th.replaceChildren();
@@ -406,6 +431,19 @@ button,input,textarea{font:inherit}
     if(has)layout();
     restart();
   }
+  let lbI=0;
+  function showLb(){$("lbImg").src=src(photos[lbI]);$("lbImg").alt="Ảnh cưới "+(lbI+1);$("lbC").textContent=(lbI+1)+" / "+photos.length;}
+  function openLb(i){lbI=i;showLb();$("lb").hidden=false;clearInterval(timer);document.body.style.overflow="hidden";$("lbX").focus();}
+  function closeLb(){$("lb").hidden=true;document.body.style.overflow="";go(lbI,true);}
+  const lbGo=d=>{lbI=(lbI+d+photos.length)%photos.length;showLb();};
+  $("lbX").addEventListener("click",closeLb);
+  $("lbP").addEventListener("click",()=>lbGo(-1));
+  $("lbN").addEventListener("click",()=>lbGo(1));
+  $("lb").addEventListener("click",e=>{if(e.target===$("lb"))closeLb();});
+  document.addEventListener("keydown",e=>{if($("lb").hidden)return;if(e.key==="Escape")closeLb();if(e.key==="ArrowLeft")lbGo(-1);if(e.key==="ArrowRight")lbGo(1);});
+  let lx=null;
+  $("lb").addEventListener("touchstart",e=>{lx=e.touches[0].clientX},{passive:true});
+  $("lb").addEventListener("touchend",e=>{if(lx==null)return;const dx=e.changedTouches[0].clientX-lx;if(Math.abs(dx)>40)lbGo(dx<0?1:-1);lx=null;});
   $("prev").addEventListener("click",()=>go(cur-1,true));
   $("next").addEventListener("click",()=>go(cur+1,true));
   let sx=null;const sl=$("slider");
