@@ -154,6 +154,10 @@ button,input,textarea{font:inherit}
 .lbn{right:max(8px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%)}
 .lbc{position:absolute;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);color:var(--gold);font-family:system-ui,sans-serif;font-size:14px}
 .card3.c{cursor:zoom-in}
+.music{position:fixed;z-index:65;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));width:46px;height:46px;border-radius:50%;border:1px solid var(--gold);background:rgba(122,0,20,.85);color:var(--gold);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.music.on span{display:inline-block;animation:spin 4s linear infinite}
+.music:not(.on)::after{content:"";position:absolute;width:30px;height:2px;background:var(--gold);transform:rotate(-45deg)}
+@keyframes spin{to{transform:rotate(360deg)}}
 /* Guestbook */
 .gb{width:100%;padding:18px;border-radius:14px;background:rgba(255,255,255,.08);display:flex;flex-direction:column;gap:10px;text-align:left}
 .gb input,.gb textarea{width:100%;background:rgba(255,190,137,.1);border:1px solid var(--gold-faint);border-radius:10px;color:var(--gold);padding:10px 12px;font-family:var(--f-body);font-size:14px}
@@ -327,6 +331,8 @@ button,input,textarea{font:inherit}
   </section>
 </main>
 <div class="toast" id="toast" hidden></div>
+<audio id="bgm" src="nhac.mp3" loop preload="auto"></audio>
+<button class="music" id="musicBtn" type="button" aria-label="Bật/tắt nhạc" hidden><span>♫</span></button>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Xem ảnh">
   <img id="lbImg" alt="">
   <button class="lbb lbx" id="lbX" type="button" aria-label="Đóng">×</button>
@@ -371,7 +377,13 @@ button,input,textarea{font:inherit}
   /* Cover + falling 囍 */
   const fall=$("fall");
   for(let i=0;i<14;i++){const s=document.createElement("span");s.textContent="囍";s.style.left=Math.random()*100+"%";s.style.fontSize=(12+Math.random()*22)+"px";s.style.animationDuration=(7+Math.random()*8)+"s";s.style.animationDelay=(-Math.random()*12)+"s";fall.appendChild(s);}
-  $("openBtn").addEventListener("click",()=>{$("cover").classList.add("gone");setTimeout(()=>{fall.style.opacity=".35"},600);});
+  const bgm=$("bgm"),mb=$("musicBtn");let hasMusic=true;
+  bgm.addEventListener("error",()=>{hasMusic=false;mb.hidden=true;});
+  bgm.volume=0.6;
+  function playM(){if(bgm.error||bgm.networkState===3)hasMusic=false;if(!hasMusic){mb.hidden=true;return;}bgm.play().then(()=>mb.classList.add("on")).catch(e=>{mb.classList.remove("on");if(bgm.error){hasMusic=false;mb.hidden=true;}});}
+  mb.addEventListener("click",()=>{if(bgm.paused)playM();else{bgm.pause();mb.classList.remove("on");}});
+  document.addEventListener("visibilitychange",()=>{if(document.hidden&&!bgm.paused){bgm.pause();bgm.dataset.resume="1";}else if(!document.hidden&&bgm.dataset.resume){delete bgm.dataset.resume;playM();}});
+  $("openBtn").addEventListener("click",()=>{if(hasMusic){mb.hidden=false;playM();}$("cover").classList.add("gone");setTimeout(()=>{fall.style.opacity=".35"},600);});
 
   /* Calendar */
   const cal=$("cal");
