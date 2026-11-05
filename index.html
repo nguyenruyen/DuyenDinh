@@ -157,6 +157,7 @@ button,input,textarea{font:inherit}
 .music.on span{display:inline-block;animation:spin 4s linear infinite}
 .music:not(.on)::after{content:"";position:absolute;width:30px;height:2px;background:var(--gold);transform:rotate(-45deg)}
 @keyframes spin{to{transform:rotate(360deg)}}
+.cnt{font-size:11px;color:var(--gold-dim);text-align:right;margin-top:-6px}
 /* Guestbook */
 .gb{width:100%;padding:18px;border-radius:14px;background:rgba(255,255,255,.08);display:flex;flex-direction:column;gap:10px;text-align:left}
 .gb input,.gb textarea{width:100%;background:rgba(255,190,137,.1);border:1px solid var(--gold-faint);border-radius:10px;color:var(--gold);padding:10px 12px;font-family:var(--f-body);font-size:14px}
@@ -318,8 +319,9 @@ button,input,textarea{font:inherit}
     <div class="orn"><span>❦</span></div>
     <form class="gb" id="gbForm" novalidate>
       <input id="gbName" maxlength="60" placeholder="Tên của bạn" autocomplete="name">
-      <textarea id="gbMsg" maxlength="600" placeholder="Gửi lời chúc đến cô dâu chú rể..."></textarea>
+      <textarea id="gbMsg" maxlength="2000" placeholder="Gửi lời chúc đến cô dâu chú rể..."></textarea>
       <div class="row"><button class="btn fill" type="button" id="gbSend">🪄 Gửi lời chúc</button></div>
+      <div class="cnt" id="gbCnt">0 / 2000</div>
       <div class="status" id="gbStatus"></div>
     </form>
   </section>
@@ -543,6 +545,7 @@ button,input,textarea{font:inherit}
     catch(e){toast("Chưa gửi được, bạn kiểm tra mạng rồi thử lại nhé.");return false;}
     finally{btn.disabled=false;btn.textContent=old;}
   }
+  const gbc=()=>{$("gbCnt").textContent=$("gbMsg").value.length+" / 2000";};$("gbMsg").addEventListener("input",gbc);
   $("rsvpForm").addEventListener("submit",e=>e.preventDefault());
   $("gbForm").addEventListener("submit",e=>e.preventDefault());
   $("rSend").addEventListener("click",async()=>{
@@ -556,7 +559,7 @@ button,input,textarea{font:inherit}
     const n=$("gbName").value.trim(),m=$("gbMsg").value.trim();
     if(!n||!m){$("gbStatus").textContent=n?"Bạn vui lòng viết lời chúc.":"Bạn vui lòng nhập tên.";(n?$("gbMsg"):$("gbName")).focus();return;}
     $("gbStatus").textContent="";
-    if(await send({loai:"Lời chúc - Nhà gái",ten:n,loichuc:m.slice(0,600)},$("gbSend"))){$("gbMsg").value="";showPop("Lời chúc của bạn đã được gửi tới Duyên & Định.");}
+    gbc();if(await send({loai:"Lời chúc - Nhà gái",ten:n,loichuc:m.slice(0,2000)},$("gbSend"))){$("gbMsg").value="";gbc();showPop("Lời chúc của bạn đã được gửi tới Duyên & Định.");}
   });
 })();
 </script>
